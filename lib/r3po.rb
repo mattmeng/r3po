@@ -1,7 +1,7 @@
-require "repo/version"
+require "r3po/version"
 require 'colorize'
 
-module Repo
+module R3po
   MASTER      = :master
   DEVELOPMENT = :development
   FEATURE     = :feature
@@ -144,12 +144,12 @@ module Repo
   end
 end
 
-namespace :repo do
+namespace :r3po do
 	namespace :feature do
 	  desc 'Start a new feature branch.  Requires a feature name.'
 	  task :start, :name do |target, args|
 	    unless args and args.has_key?( :name )
-	      Repo::App.instance.print_error( "Please specify a feature name. (Ex. rake feature:start[mybranch])" )
+	      Repo::App.instance.print_error( "Please specify a feature name. (Ex. rake r3po:feature:start[mybranch])" )
 	    else
 	      branch = "#{Repo::FEATURE}/#{args[:name]}"
 

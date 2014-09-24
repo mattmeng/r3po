@@ -1,2 +1,2 @@
 require "bundler/gem_tasks"
-require 'repo'
+require 'r3po'
