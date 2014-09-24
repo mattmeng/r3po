@@ -1,4 +1,4 @@
-require "r3po/version"
+require "r3po/constants"
 require 'colorize'
 
 module R3po

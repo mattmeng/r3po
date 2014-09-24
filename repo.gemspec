@@ -5,7 +5,7 @@ require 'r3po/constants'
 
 Gem::Specification.new do |spec|
   spec.name          = "r3po"
-  spec.version       = Repo::VERSION
+  spec.version       = R3po::VERSION
   spec.authors       = ["Matt Meng"]
   spec.email         = ["mengmatt@gmail.com"]
   spec.summary       = %q{A gem that provides rake tasks to enforce standard semantic versioning and repo cleanliness.}
