@@ -32,7 +32,7 @@ module R3po
   #{"Warning:".yellow} Writing out a default version file as I
   couldn't find one.  Please make sure your code uses this file
   to detect its version as I will update it so that we maintain
-  a clean repo.
+  a clean R3po.
 
   Follow semantic versioning, as described here:
   http://guides.rubygems.org/patterns/#semantic-versioning
@@ -149,31 +149,31 @@ namespace :r3po do
 	  desc 'Start a new feature branch.  Requires a feature name.'
 	  task :start, :name do |target, args|
 	    unless args and args.has_key?( :name )
-	      Repo::App.instance.print_error( "Please specify a feature name. (Ex. rake r3po:feature:start[mybranch])" )
+	      R3po::App.instance.print_error( "Please specify a feature name. (Ex. rake r3po:feature:start[mybranch])" )
 	    else
-	      branch = "#{Repo::FEATURE}/#{args[:name]}"
+	      branch = "#{R3po::FEATURE}/#{args[:name]}"
 
-	      Repo::App.instance.new_branch( Repo::DEVELOPMENT, branch ) do
-	        Repo::App.instance.print_success( 'STARTED FEATURE', branch )
+	      R3po::App.instance.new_branch( R3po::DEVELOPMENT, branch ) do
+	        R3po::App.instance.print_success( 'STARTED FEATURE', branch )
 	      end
 	    end
 	  end
 
 	  desc 'Finish the feature branch you are currently on, merging it back into development.'
 	  task :finish do
-	    Repo::App.instance.current_branch do |branch|
-	      unless branch[0] == Repo::FEATURE
-	        Repo::App.instance.print_error( 'This is not a feature branch.' )
+	    R3po::App.instance.current_branch do |branch|
+	      unless branch[0] == R3po::FEATURE
+	        R3po::App.instance.print_error( 'This is not a feature branch.' )
 	      else
 	        branch = branch.join( '/' )
 	        print "Has a merge request been cleared for #{branch} #{'[y\n]'.blue}: "
 	        response = STDIN.gets.chomp
 
 	        if response == 'y'
-	          Repo::App.instance.merge( Repo::DEVELOPMENT, branch ) do # Merge development in first.
-	            Repo::App.instance.merge( branch, Repo::DEVELOPMENT ) do # Now merge the branch back into development.
-	              Repo::App.instance.delete_branch( branch ) do # Delete the remote and local feature branches.
-	                Repo::App.instance.print_success( 'FINISHED FEATURE', branch )
+	          R3po::App.instance.merge( R3po::DEVELOPMENT, branch ) do # Merge development in first.
+	            R3po::App.instance.merge( branch, R3po::DEVELOPMENT ) do # Now merge the branch back into development.
+	              R3po::App.instance.delete_branch( branch ) do # Delete the remote and local feature branches.
+	                R3po::App.instance.print_success( 'FINISHED FEATURE', branch )
 	              end
 	            end
 	          end
@@ -186,48 +186,48 @@ namespace :r3po do
 	namespace :release do
     desc "Start a new release branch, incrementing by minor version (1.x.0)."
     task :minor do
-      Repo::App.instance.version do |major, minor, patch|
+      R3po::App.instance.version do |major, minor, patch|
         version = "#{major}.#{minor + 1}.0"
-        branch = "#{Repo::RELEASE}/v#{version}"
-        Repo::App.instance.new_branch( Repo::DEVELOPMENT, branch ) do
-          Repo::App.instance.version = "#{version}.beta1"
-          Repo::App.instance.print_success( 'STARTED MINOR RELEASE', branch )
+        branch = "#{R3po::RELEASE}/v#{version}"
+        R3po::App.instance.new_branch( R3po::DEVELOPMENT, branch ) do
+          R3po::App.instance.version = "#{version}.beta1"
+          R3po::App.instance.print_success( 'STARTED MINOR RELEASE', branch )
         end
       end
     end
 
     desc "Start a new release branch, incrementing by major version (x.0.0)."
     task :major do
-      Repo::App.instance.version do |major, minor, patch|
+      R3po::App.instance.version do |major, minor, patch|
         version = "#{major + 1}.0.0"
-        branch = "#{Repo::RELEASE}/v#{version}"
-        Repo::App.instance.new_branch( Repo::DEVELOPMENT, branch ) do
-          Repo::App.instance.version = "#{version}.beta1"
-          Repo::App.instance.print_success( 'STARTED MAJOR RELEASE', branch )
+        branch = "#{R3po::RELEASE}/v#{version}"
+        R3po::App.instance.new_branch( R3po::DEVELOPMENT, branch ) do
+          R3po::App.instance.version = "#{version}.beta1"
+          R3po::App.instance.print_success( 'STARTED MAJOR RELEASE', branch )
         end
       end
     end
 
 	  desc 'Finish the release branch you are currently on, merging it back into development and master and creating a version tag.'
 	  task :finish do
-	    Repo::App.instance.current_branch do |branch|
-	      unless branch[0] == Repo::RELEASE
-	        Repo::App.instance.print_error( 'This is not a release branch.' )
+	    R3po::App.instance.current_branch do |branch|
+	      unless branch[0] == R3po::RELEASE
+	        R3po::App.instance.print_error( 'This is not a release branch.' )
 	      else
-	        Repo::App.instance.version = branch[1][/\d+\.\d+\.\d+/]
+	        R3po::App.instance.version = branch[1][/\d+\.\d+\.\d+/]
 	        tag = branch[1]
 	        branch = branch.join( '/' )
 	        print "Has a merge request been cleared for #{branch} #{'[y\n]'.blue}: "
 	        response = STDIN.gets.chomp
 
 	        if response == 'y'
-	          Repo::App.instance.merge( branch, Repo::DEVELOPMENT ) do # Merge the release branch back into development.
-	            Repo::App.instance.merge( branch, Repo::MASTER ) do # Merge the release branch into master.
-	              Repo::App.instance.create_tag( tag ) do # Create a tag at our merge in master.
-	                Repo::App.instance.push( tag ) do # Push up the tag.
-	                  Repo::App.instance.delete_branch( branch ) do # Delete the remote and local release branches.
+	          R3po::App.instance.merge( branch, R3po::DEVELOPMENT ) do # Merge the release branch back into development.
+	            R3po::App.instance.merge( branch, R3po::MASTER ) do # Merge the release branch into master.
+	              R3po::App.instance.create_tag( tag ) do # Create a tag at our merge in master.
+	                R3po::App.instance.push( tag ) do # Push up the tag.
+	                  R3po::App.instance.delete_branch( branch ) do # Delete the remote and local release branches.
 	                    # result = `rake build`
-	                    Repo::App.instance.print_success( 'FINISHED RELEASE', branch )
+	                    R3po::App.instance.print_success( 'FINISHED RELEASE', branch )
 	                  end
 	                end
 	              end
@@ -242,36 +242,36 @@ namespace :r3po do
 	namespace :patch do
 	  desc "Start a new patch branch, incrementing by patch version (1.0.x)."
 	  task :start do
-	    Repo::App.instance.version do |major, minor, patch|
+	    R3po::App.instance.version do |major, minor, patch|
 	      version = "#{major}.#{minor}.#{patch + 1}"
-	      branch = "#{Repo::PATCH}/v#{version}"
-	      Repo::App.instance.new_branch( Repo::MASTER, branch ) do
-	        Repo::App.instance.version = "#{version}.beta1"
-	        Repo::App.instance.print_success( 'STARTED PATCH', branch )
+	      branch = "#{R3po::PATCH}/v#{version}"
+	      R3po::App.instance.new_branch( R3po::MASTER, branch ) do
+	        R3po::App.instance.version = "#{version}.beta1"
+	        R3po::App.instance.print_success( 'STARTED PATCH', branch )
 	      end
 	    end
 	  end
 
 	  desc 'Finish the patch branch you are currently on, merging it back into development and master and creating a version tag.'
 	  task :finish do
-	    Repo::App.instance.current_branch do |branch|
-	      unless branch[0] == Repo::PATCH
-	        Repo::App.instance.print_error( 'This is not a patch branch.' )
+	    R3po::App.instance.current_branch do |branch|
+	      unless branch[0] == R3po::PATCH
+	        R3po::App.instance.print_error( 'This is not a patch branch.' )
 	      else
-	        Repo::App.instance.version = branch[1][/\d+\.\d+\.\d+/]
+	        R3po::App.instance.version = branch[1][/\d+\.\d+\.\d+/]
 	        tag = branch[1]
 	        branch = branch.join( '/' )
 	        print "Has a merge request been cleared for #{branch} #{'[y\n]'.blue}: "
 	        response = STDIN.gets.chomp
 
 	        if response == 'y'
-	          Repo::App.instance.merge( branch, Repo::DEVELOPMENT ) do # Merge the patch branch back into development.
-	            Repo::App.instance.merge( branch, Repo::MASTER ) do # Merge the patch branch into master.
-	              Repo::App.instance.create_tag( tag ) do # Create a tag at our merge in master.
-	                Repo::App.instance.push( tag ) do # Push up the tag.
-	                  Repo::App.instance.delete_branch( branch ) do # Delete the remote and local patch branches.
+	          R3po::App.instance.merge( branch, R3po::DEVELOPMENT ) do # Merge the patch branch back into development.
+	            R3po::App.instance.merge( branch, R3po::MASTER ) do # Merge the patch branch into master.
+	              R3po::App.instance.create_tag( tag ) do # Create a tag at our merge in master.
+	                R3po::App.instance.push( tag ) do # Push up the tag.
+	                  R3po::App.instance.delete_branch( branch ) do # Delete the remote and local patch branches.
 	                    # result = `rake build`
-	                    Repo::App.instance.print_success( 'FINISHED PATCH', branch )
+	                    R3po::App.instance.print_success( 'FINISHED PATCH', branch )
 	                  end
 	                end
 	              end
