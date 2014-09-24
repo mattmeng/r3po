@@ -184,31 +184,29 @@ namespace :repo do
 	end
 
 	namespace :release do
-	  namespace :start do
-	    desc "Start a new release branch, incrementing by minor version (1.x.0)."
-	    task :minor do
-	      Repo::App.instance.version do |major, minor, patch|
-	        version = "#{major}.#{minor + 1}.0"
-	        branch = "#{Repo::RELEASE}/v#{version}"
-	        Repo::App.instance.new_branch( Repo::DEVELOPMENT, branch ) do
-	          Repo::App.instance.version = "#{version}.beta1"
-	          Repo::App.instance.print_success( 'STARTED MINOR RELEASE', branch )
-	        end
-	      end
-	    end
+    desc "Start a new release branch, incrementing by minor version (1.x.0)."
+    task :minor do
+      Repo::App.instance.version do |major, minor, patch|
+        version = "#{major}.#{minor + 1}.0"
+        branch = "#{Repo::RELEASE}/v#{version}"
+        Repo::App.instance.new_branch( Repo::DEVELOPMENT, branch ) do
+          Repo::App.instance.version = "#{version}.beta1"
+          Repo::App.instance.print_success( 'STARTED MINOR RELEASE', branch )
+        end
+      end
+    end
 
-	    desc "Start a new release branch, incrementing by major version (x.0.0)."
-	    task :major do
-	      Repo::App.instance.version do |major, minor, patch|
-	        version = "#{major + 1}.0.0"
-	        branch = "#{Repo::RELEASE}/v#{version}"
-	        Repo::App.instance.new_branch( Repo::DEVELOPMENT, branch ) do
-	          Repo::App.instance.version = "#{version}.beta1"
-	          Repo::App.instance.print_success( 'STARTED MAJOR RELEASE', branch )
-	        end
-	      end
-	    end
-	  end
+    desc "Start a new release branch, incrementing by major version (x.0.0)."
+    task :major do
+      Repo::App.instance.version do |major, minor, patch|
+        version = "#{major + 1}.0.0"
+        branch = "#{Repo::RELEASE}/v#{version}"
+        Repo::App.instance.new_branch( Repo::DEVELOPMENT, branch ) do
+          Repo::App.instance.version = "#{version}.beta1"
+          Repo::App.instance.print_success( 'STARTED MAJOR RELEASE', branch )
+        end
+      end
+    end
 
 	  desc 'Finish the release branch you are currently on, merging it back into development and master and creating a version tag.'
 	  task :finish do
