@@ -144,7 +144,7 @@ module Repo
   end
 end
 
-namespace :repo
+namespace :repo do
 	namespace :feature do
 	  desc 'Start a new feature branch.  Requires a feature name.'
 	  task :start, :name do |target, args|
