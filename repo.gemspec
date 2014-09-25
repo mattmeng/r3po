@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["mengmatt@gmail.com"]
   spec.summary       = %q{A gem that provides rake tasks to enforce standard semantic versioning and repo cleanliness.}
   spec.description   = %q{A gem that provides rake tasks to enforce standard semantic versioning and repo cleanliness.}
-  spec.homepage      = "http://github.com/mattmeng/r3po"
+  spec.homepage      = "http://mattmeng.github.io/r3po"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
