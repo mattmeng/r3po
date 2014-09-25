@@ -32,7 +32,7 @@ module R3po
   #{"Warning:".yellow} Writing out a default version file as I
   couldn't find one.  Please make sure your code uses this file
   to detect its version as I will update it so that we maintain
-  a clean R3po.
+  a clean repo.
 
   Follow semantic versioning, as described here:
   http://guides.rubygems.org/patterns/#semantic-versioning
