@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>R3po by mattmeng</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>R3po</h1>
+        <h2>A gem that provides rake tasks to enforce standard semantic versioning and repo cleanliness.</h2>
+        <a href="https://github.com/mattmeng/r3po" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a name="r3po" class="anchor" href="#r3po"><span class="octicon octicon-link"></span></a>R3po</h1>
+
+<p>A gem that provides rake tasks to enforce standard semantic versioning and repo cleanliness.  See the following article for an overview of the repository strategy used: <a href="http://nvie.com/posts/a-successful-git-branching-model/">http://nvie.com/posts/a-successful-git-branching-model/</a></p>
+
+<p><img src="http://nvie.com/img/git-model@2x.png" alt="Repo Strategy" title="Repo Strategy"></p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>Add this line to your application's Gemfile:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="n">gem</span> <span class="s1">'r3po'</span>
+</pre></div>
+
+<p>And then execute:</p>
+
+<pre><code>$ bundle
+</code></pre>
+
+<p>Or install it yourself as:</p>
+
+<pre><code>$ gem install r3po
+</code></pre>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>You must start with at least a <code>master</code> and <code>development</code> branch.  Master should be the branch that, at every commit, contains working and stable code as far as you can test.  Development is the dirty branch, it could be work, it could not be; we don't care.  It's where most bugs and all feature get dumped.  Master and development should NEVER be merged into each other directly.</p>
+
+<p>R3po will namespace all your branches depending on what type of branch it is:</p>
+
+<p>Feature Branch: <code>feature/branch_name</code><br>
+Release Branch: <code>release/vX.Y.Z</code><br>
+Patch Branch:   <code>patch/vX.Y.Z</code><br></p>
+
+<p>The version your code is on should be stored in a file called <code>version</code> on the same level as your rakefile. It should contain the semantic version of your code.  R3po will automatically update this and use this file to create tags and branches for you.</p>
+
+<h3>
+<a name="feature-branches" class="anchor" href="#feature-branches"><span class="octicon octicon-link"></span></a>Feature Branches</h3>
+
+<p>Feature branches allow you to work on particular features without impacting other features or bugs.  To create a feature branch, from your repo issue:</p>
+
+<div class="highlight highlight-bash"><pre>rake r3po:feature:start<span class="o">[</span>my_new_branch<span class="o">]</span>
+</pre></div>
+
+<p>This will automatically branch a new feature from off of development, naming it <code>feature/my_new_branch</code>.</p>
+
+<p>Feature branches should be regularly updated from trunk, but should NEVER be merged back into trunk until the feature is finished.  To accomplish this task, issue the following while the feature branch you want to finish is checked out:</p>
+
+<div class="highlight highlight-bash"><pre>rake r3po:feature:finish
+</pre></div>
+
+<p>This will merge development into your branch to make sure it is up to date.  Then it will merge your feature branch back into development.  Finally it will delete both your local and the remote copy of the feature branch and push all changes up to origin.</p>
+
+<h3>
+<a name="release-branches" class="anchor" href="#release-branches"><span class="octicon octicon-link"></span></a>Release Branches</h3>
+
+<p>Release branches give you a place to work on final bugs before you want to make a major or minor release.  Using the <code>version</code> file mentioned above, it will auto increment your version depending on which type of release it is.  To create a minor version release (Ex. 1.8.1 going to 1.9.0), issue:</p>
+
+<div class="highlight highlight-bash"><pre>rake r3po:release:minor
+</pre></div>
+
+<p>To create a major release (Ex. 1.8.1 going to 2.0.0), issue:</p>
+
+<div class="highlight highlight-bash"><pre>rake r3po:release:major
+</pre></div>
+
+<p>Both commands will branch a new release off of development and increment the version in the <code>version</code> file and commit that change.  The new branch will be named <code>release/vX.Y.Z</code> with 'X.Y.Z' being the new version number.</p>
+
+<p>Release branches should only contain bug fixes on features that have been included in this release or on previously available functionality.  Development should NEVER be merged back into a release branch.  But periodic merges of the release back into the development branch are OK.  To finish the release branch:</p>
+
+<div class="highlight highlight-bash"><pre>rake r3po:release:finish
+</pre></div>
+
+<p>This will update the version number again, just in case you made beta branch numbers.  It will then merge the release branch into development, and then into master.  It will create a new tag on master for the version, and push all changes up to origin.  It will also delete the local and remote copies of the release branch.</p>
+
+<h3>
+<a name="patch-branches" class="anchor" href="#patch-branches"><span class="octicon octicon-link"></span></a>Patch Branches</h3>
+
+<p>Patch branches are for fixes found to exist in master that need immediate attention and can't wait for a major or minor release. Using the <code>version</code> file, it will auto increment your version by the patch number (Ex. 1.8.1 going to 1.8.2).  To start a patch, issue:</p>
+
+<div class="highlight highlight-bash"><pre>rake r3po:patch:start
+</pre></div>
+
+<p>This will branch off a new patch branch from master, incrementing the version appropriately and checking in that change.  The patch branch will be named <code>patch/vX.Y.Z</code> with the 'X.Y.Z' being the new version number. Patch branches should not be merged anywhere until they are complete.  Make bug fixes as needed and then finish the patch:</p>
+
+<div class="highlight highlight-bash"><pre>rake r3po:patch:finish
+</pre></div>
+
+<p>This will update the version to the official number, merge the patch into development and then into master.  It will then create the appropriate version tag on master and delete the local and remote copies of the patch branch.</p>
+
+<h2>
+<a name="contributing" class="anchor" href="#contributing"><span class="octicon octicon-link"></span></a>Contributing</h2>
+
+<ol>
+<li>Fork it ( <a href="https://github.com/mattmeng/r3po/fork">https://github.com/mattmeng/r3po/fork</a> )</li>
+<li>Add Repo to your gemspec and rakefile (<code>require 'r3po'</code>)</li>
+<li>Create your feature branch (<code>rake r3po:feature:start[my-new-feature]</code>)</li>
+<li>Commit your changes (<code>git commit -am 'Add some feature'</code>)</li>
+<li>Push to the branch (<code>git push origin my-new-feature</code>)</li>
+<li>Create a new Pull Request</li>
+</ol>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/mattmeng/r3po/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/mattmeng/r3po/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/mattmeng/r3po"></a> is maintained by <a href="https://github.com/mattmeng">mattmeng</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
