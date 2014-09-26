@@ -39,7 +39,7 @@ module R3po
 
 }
         self.version = '0.0.0'
-        version = 0, 0, 0
+        version = [0, 0, 0]
       end
       yield *version if block_given?
       return version
