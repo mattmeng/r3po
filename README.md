@@ -1,4 +1,6 @@
-# R3po
+[![Gem Version](https://badge.fury.io/rb/r3po.svg)](http://badge.fury.io/rb/r3po)
+
+# r3po
 
 A gem that provides rake tasks to enforce standard semantic versioning and repo cleanliness.  See the following article for an overview of the repository strategy used: http://nvie.com/posts/a-successful-git-branching-model/
 
